@@ -63,7 +63,7 @@ def register_after_request(app):
         return resp
 
 
-def create_app(register_all=True, environment='production'):
+def create_app(register_all=True, environment='development'):
     app = LinFlask(__name__, static_folder='./assets')
     app.config['ENV'] = environment
     env = app.config.get('ENV')
@@ -76,7 +76,9 @@ def create_app(register_all=True, environment='production'):
     app.config.from_object('app.config.log')
     if register_all:
         register_blueprints(app)
-        Lin(app)
+        from app.models.user import User
+        Lin(app, user_model=User)
+        # Lin(app)
         register_before_request(app)
         register_after_request(app)
         apply_cors(app)

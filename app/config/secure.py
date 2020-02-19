@@ -11,7 +11,7 @@ class DevelopmentSecure(BaseConfig):
     """
     开发环境安全性配置
     """
-    SQLALCHEMY_DATABASE_URI = 'mysql+cymysql://root:zhangyuhu666@localhost:3306/lin-cms'
+    SQLALCHEMY_DATABASE_URI = 'mysql+cymysql://root:zhangyuhu666@127.0.0.1:3306/cloudApplication'
 
     SQLALCHEMY_ECHO = False
 
@@ -22,7 +22,7 @@ class ProductionSecure(BaseConfig):
     """
     生产环境安全性配置
     """
-    SQLALCHEMY_DATABASE_URI = 'mysql+cymysql://root:zhangyuhu666@localhost:3306/lin-cms'
+    SQLALCHEMY_DATABASE_URI = 'mysql+cymysql://rootd@FieF93a28G@hk.tinsfox.com:3306/cloudApplication'
 
     SQLALCHEMY_ECHO = False
 
