@@ -17,6 +17,10 @@ class DevelopmentSecure(BaseConfig):
 
     SECRET_KEY = '\x88W\xf09\x91\x07\x98\x89\x87\x96\xa0A\xc68\xf9\xecJJU\x17\xc5V\xbe\x8b\xef\xd7\xd8\xd3\xe6\x95*4'
 
+    APPID = 'wx82544dc60f5430d5'
+
+    APPSECET = 'eb050b132304239a5fe4e7258c53bf46'
+
 
 class ProductionSecure(BaseConfig):
     """
@@ -27,3 +31,7 @@ class ProductionSecure(BaseConfig):
     SQLALCHEMY_ECHO = False
 
     SECRET_KEY = '\x88W\xf09\x91\x07\x98\x89\x87\x96\xa0A\xc68\xf9\xecJJU\x17\xc5V\xbe\x8b\xef\xd7\xd8\xd3\xe6\x95*4'
+
+    APPID = 'wx82544dc60f5430d5'
+
+    APPSECET = 'eb050b132304239a5fe4e7258c53bf46'

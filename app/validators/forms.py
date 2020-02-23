@@ -39,6 +39,11 @@ class LoginForm(Form):
     password = PasswordField('密码', validators=[DataRequired(message='密码不可为空')])
 
 
+# wx登陆校验
+class WxLoginForm(Form):
+    code = StringField(validators=[DataRequired()])
+
+
 # 重置密码校验
 class ResetPasswordForm(Form):
     new_password = PasswordField('新密码', validators=[

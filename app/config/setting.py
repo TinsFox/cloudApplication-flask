@@ -17,6 +17,8 @@ class BaseConfig(object):
     # 屏蔽 sql alchemy 的 FSADeprecationWarning
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+    OPENIDURL = 'https://api.weixin.qq.com/sns/jscode2session?appid={}&secret={}&js_code={}&grant_type=authorization_code'
+
 
 class DevelopmentConfig(BaseConfig):
     """

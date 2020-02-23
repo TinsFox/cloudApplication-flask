@@ -6,7 +6,7 @@
 """
 from operator import and_
 
-from flask import jsonify
+from flask import jsonify, current_app
 from flask_jwt_extended import create_access_token, get_jwt_identity, get_current_user, \
     create_refresh_token, verify_jwt_refresh_token_in_request
 from lin.core import manager, route_meta, Log
@@ -17,9 +17,9 @@ from lin.log import Logger
 from lin.redprint import Redprint
 
 from app.libs.error_code import RefreshException
-from app.libs.utils import json_res
+from app.libs.utils import json_res, request_wx_api
 from app.validators.forms import LoginForm, RegisterForm, ChangePasswordForm, UpdateInfoForm, \
-    AvatarUpdateForm
+    AvatarUpdateForm, WxLoginForm
 
 user_api = Redprint('user')
 
@@ -58,6 +58,19 @@ def login():
     )
     access_token, refresh_token = get_tokens(user)
     return json_res(access_token=access_token, refresh_token=refresh_token)
+
+
+@user_api.route('/wx/login', methods=['POST'])
+@route_meta(auth='登陆', module='用户', mount=False)
+def wxlogin():
+    form = WxLoginForm().validate_for_api()
+    code = form.code.data
+    res = request_wx_api(code)
+    user = manager.find_user(openid=res['openid'])
+    if user:
+        raise ParameterException(msg='邮箱已被注册，请重新输入邮箱')
+    wx_register_user(res)
+    return 'success'
 
 
 @user_api.route('', methods=['PUT'])
@@ -151,4 +164,17 @@ def _register_user(form: RegisterForm):
             user.email = form.email.data
         user.password = form.password.data
         user.group_id = form.group_id.data
+        db.session.add(user)
+
+
+def wx_register_user(form):
+    with db.auto_commit():
+        # 注意：此处使用挂载到manager上的user_model，不可使用默认的User
+        user = manager.user_model()
+        user.openid = form['openid']
+        user.username = 'tinsfox'
+        # if form.email.data and form.email.data.strip() != "":
+        #     user.email = '1414849373@qq.com'
+        # user.password = form.password.data
+        # user.group_id = form.group_id.data
         db.session.add(user)

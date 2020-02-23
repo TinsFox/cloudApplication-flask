@@ -5,9 +5,9 @@
 
 import re
 import time
-
+import requests
 from flask import current_app, jsonify, request
-from lin.exception import ParameterException
+from lin.exception import ParameterException, AuthFailed
 
 
 def get_timestamp(fmt='%Y-%m-%d %H:%M:%S'):
@@ -47,3 +47,47 @@ def json_res(**kwargs):
     count, items, page, total, total_page ...
     '''
     return jsonify(kwargs)
+
+
+def getAccessToken():
+    APPSECET = current_app.config.get('APPSECET')
+    appid = current_app.config.get('APPID')
+    # url = 'https://api.weixin.qq.com/sns/jscode2session?appid={}&secret={}&js_code={}&grant_type=client_credential'
+    url = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={}&secret={}'
+    response = requests.get(url.format(appid, APPSECET))
+    access_token = response.json()['access_token']
+    expires = response.json()['expires_in']
+    print(expires)
+    return access_token
+
+
+def getOpenID(code):
+    APPSECET = current_app.config.get('APPSECET')
+    appid = current_app.config.get('APPID')
+    errcode = {
+        '-1': u'系统繁忙，此时请开发者稍候再试',
+        '40029': u'code无效',
+        '45011': u'频率限制，每个用户每分钟100次',
+    }
+    response = requests.get(current_app.config.get('OPENIDURL').format(appid, APPSECET, code))
+    response.encoding = response.apparent_encoding
+    content = response.json()
+    if 'errcode' in content.keys() and content.get('errcode') != 0:
+        print(errcode[content.get('errcode')])
+        raise AuthFailed(errcode[content.get('errcode')])
+    return content
+
+
+def request_wx_api(code):
+    """
+    # 请求微信接口　
+    :param code: 用户登录凭证
+    """
+    app_secret = current_app.config.get('APPSECET')
+    app_id = current_app.config.get('APPID')
+    response = requests.get(current_app.config.get('OPENIDURL').format(app_id, app_secret, code))
+    response.encoding = response.apparent_encoding
+    content = response.json()
+    if 'errcode' in content.keys() and content.get('errcode') != 0:
+        raise AuthFailed(content.get('errmsg'))
+    return content

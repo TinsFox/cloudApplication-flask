@@ -18,6 +18,7 @@ def register_blueprints(app):
     app.register_blueprint(create_cms(), url_prefix='/cms')
 
 
+
 def apply_cors(app):
     CORS(app)
 
@@ -63,7 +64,7 @@ def register_after_request(app):
         return resp
 
 
-def create_app(register_all=True, environment='development'):
+def create_app(register_all=True, environment='production'):
     app = LinFlask(__name__, static_folder='./assets')
     app.config['ENV'] = environment
     env = app.config.get('ENV')

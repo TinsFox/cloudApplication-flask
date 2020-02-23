@@ -2,7 +2,12 @@ pip inatall <-> -i http://mirrors.aliyun.com/pypi/simple/
 docker build -t cloudapplication .
 docker run --name cloudApplication -v /home/tinsfox/cloudApplication:/app -p 6780:5000 --restart=always -itd cloudapplication
 docker exec -it cloudApplication bash
+python3 starter.py
+python3 add_super.py
+python3 starter.py
+
 gunicorn -b 0.0.0.0:5000 starter:app --daemon
 gunicorn -w 3 -b 0.0.0.0:5000 starter:app --daemon
+gunicorn -w 3 -b 0.0.0.0:5009 starter:app --daemon
 ps -ef | grep gunicorn
 kill -9 进程ID
